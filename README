@@ -1,0 +1,24 @@
+before run,you need to install:
+  apt install xx:
+  1.python3.x
+  2.mysql-server mysql-client libmysqlclient-dev
+  
+  pip install xx:
+  1.MySQLdb
+  2.flask
+  
+  after that,you need to configure:
+    1.mysql 
+    create 4 tables in a database:
+      a.mem_info,which includes 4 fields in order:mem_usage(float),mem_used(bigint),mem_free(bigint),time(int)
+      b.cpu_info,which includes 5 fields in order:cpu_usage(float),user_time(float),sys_time(float),idle_time(float),time(int)
+      c.disk_usage,which includes 2 fields in order:disk_usage(float),time(int)
+      d.net_info,which includes 3 fields in order:send_package(int),recv_package(int),time(int)
+    2.in root directory,make 2 directories as the official document of flask said:
+      a.static
+        put bootstrap.min.css bootstrap.min.js jquery.min.js echarts.min.js into static,which can be easily downloaded by searching 
+        the keywords.
+      b.templates
+       put the html into this directory.
+  finally,run get_osinfo.py first,this process will write to the database per second;then run flask_web.py,and open your browser,open
+  0.0.0.0:8889,then all would be ok.
