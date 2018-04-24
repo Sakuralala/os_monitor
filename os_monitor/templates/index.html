@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+     <meta charset="utf-8">
+	 <script src="/static/jquery.min.js"></script>
+	 <script src="/static/bootstrap.min.js"></script>
+	 <script src="/static/echarts.min.js"></script>
+	 <link rel="stylesheet" href="/static/bootstrap.min.css">
+</head>
+ <body>
+		<ul id="myTab" class="nav nav-tabs">
+			<li class="active">
+				<a href="#home" data-toggle="tab">
+					memory 
+				</a>
+			</li>
+			<li><a href="#cpu" data-toggle="tab">cpu</a></li>
+			<li><a href="#disk" data-toggle="tab">disk</a></li>
+			<li><a href="#network" data-toggle="tab">network</a></li>
+		</ul>
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade in active" id="home">
+				 <div id="mem_usage" style="width: 500px;height:700px;position:absolute;"></div>
+				 <div id="mem_used" style="width: 500px;height:700px;position:absolute;left:650px;"></div>
+				 <div id="mem_free" style="width: 500px;height:700px;left:1300px;"></div>
+			</div>
+			<div class="tab-pane fade" id="cpu">
+				 <div id="cpu_usage" style="width: 800px;height:500px;position:absolute;"></div>
+				 <div id="user_time" style="width: 800px;height:500px;left:1000px;"></div>
+				 <div id="sys_time" style="width: 800px;height:500px;position:absolute;"></div>
+				 <div id="idle_time" style="width: 800px;height:500px;left:1000px;"></div>
+			</div>
+			<div class="tab-pane fade" id="disk">
+				 <div id="disk_usage" style="width:1200px;height:1500px;"></div>
+			</div>
+			<div class="tab-pane fade" id="network">
+				 <div id="send_package" style="width: 800px;height:800px;position:absolute;"></div>
+				 <div id="recv_package" style="width: 800px;height:800px;left:1000px;"></div>
+			</div>
+		</div>		
+<script type="text/javascript">
+	var mem_usage=echarts.init(document.getElementById('mem_usage'));
+	var mem_used=echarts.init(document.getElementById('mem_used'));
+	var mem_free=echarts.init(document.getElementById('mem_free'));
+	var cpu_usage=echarts.init(document.getElementById('cpu_usage'));
+	var user_time=echarts.init(document.getElementById('user_time'));
+	var sys_time=echarts.init(document.getElementById('sys_time'));
+	var idle_time=echarts.init(document.getElementById('idle_time'));
+	var disk_usage=echarts.init(document.getElementById('disk_usage'));
+	var send_package=echarts.init(document.getElementById('send_package'));
+	var recv_package=echarts.init(document.getElementById('recv_package'));
+	var charts=[];
+	var option={
+		title : {
+			text: ''
+		},
+		 grid:{
+			 x:100,
+			 y:100
+		 },
+		tooltip : {
+			trigger: 'axis'
+		},
+		toolbox: {
+			show : true,
+			feature : {
+				mark : {show: true},
+				dataView : {show: true, readOnly: false},
+				magicType : {show: true, type: ['line', 'bar']},
+				restore : {show: true},
+				saveAsImage : {show: true}
+			}
+		},
+		calculable : true,
+		xAxis : [
+			{
+				type : 'category',
+				boundaryGap : false,
+				data : []
+			}
+		],
+		yAxis : [
+			{
+				type : 'value',
+				axisLabel : {
+					formatter: '{value} %'
+				}
+			}
+		],
+		series : [
+			{
+				name:'',
+				type:'line',
+				data:[],
+			}
+		]
+	};
+	mem_usage.setOption(option);
+	mem_usage.setOption(
+					{
+						title:{text:'memory usage'},
+						series:
+						[
+						{	markPoint : {
+					data : [
+						{type : 'max', name: '最大值'},
+						{type : 'min', name: '最小值'}
+					]
+						},
+						markLine : {
+						data : [
+							{type : 'average', name: '平均值'}
+							]
+					}
+				}
+				]
+				});
+
+	mem_free.setOption(option);
+	mem_free.setOption({title:{text:'memory free'},yAxis:{type:'value',boundaryGap:false,axisLabel:{show:true,interval:'auto',formatter:'{value}mb'}}});
+	mem_free.setOption(
+					{
+						series:
+						[
+						{	markPoint : {
+					data : [
+						{type : 'max', name: '最大值'},
+						{type : 'min', name: '最小值'}
+					]
+						},
+						markLine : {
+						data : [
+							{type : 'average', name: '平均值'}
+							]
+					}
+				}
+				]
+				});
+
+	mem_used.setOption(option);
+	mem_used.setOption({title:{text:'memory used'},yAxis:{type:'value',boundaryGap:false,axisLabel:{formatter:'{value}mb'}}});
+	mem_used.setOption(
+					{
+						series:
+						[
+						{	markPoint : {
+					data : [
+						{type : 'max', name: '最大值'},
+						{type : 'min', name: '最小值'}
+					]
+						},
+						markLine : {
+						data : [
+							{type : 'average', name: '平均值'}
+							]
+					}
+				}
+				]
+				});
+	cpu_usage.setOption(option);
+	cpu_usage.setOption({title:{text:'cpu usage'}});
+	cpu_usage.setOption(
+					{
+						series:
+						[
+						{	markPoint : {
+					data : [
+						{type : 'max', name: '最大值'},
+						{type : 'min', name: '最小值'}
+					]
+						},
+						markLine : {
+						data : [
+							{type : 'average', name: '平均值'}
+							]
+					}
+				}
+				]
+				});
+	user_time.setOption(option);
+	user_time.setOption({title:{text:'user time'},yAxis:{type:'value',boundaryGap:false,axisLabel:{show:true,interval:'auto',formatter:'{value}s'}}});
+	sys_time.setOption(option);
+	sys_time.setOption({title:{text:'system time'},yAxis:{type:'value',boundaryGap:false,axisLabel:{show:true,interval:'auto',formatter:'{value}s'}}});
+	idle_time.setOption(option);
+	idle_time.setOption({title:{text:'idle time'},yAxis:{type:'value',boundaryGap:false,axisLabel:{show:true,interval:'auto',formatter:'{value}s'}}});
+	disk_usage.setOption(option);
+	disk_usage.setOption({title:{text:'disk usage'}});
+	disk_usage.setOption(
+					{
+						series:
+						[
+						{	markPoint : {
+					data : [
+						{type : 'max', name: '最大值'},
+						{type : 'min', name: '最小值'}
+					]
+						},
+						markLine : {
+						data : [
+							{type : 'average', name: '平均值'}
+							]
+					}
+				}
+				]
+				});
+	send_package.setOption(option);
+	send_package.setOption({title:{text:'send packets'},yAxis:{type:'value',boundaryGap:false,axisLabel:{show:true,interval:'auto',formatter:'{value}ge'}}});
+	recv_package.setOption(option);
+	recv_package.setOption({title:{text:'recv packets'},yAxis:{type:'value',boundaryGap:false,axisLabel:{show:true,interval:'auto',formatter:'{value}ge'}}});
+	mem_usage.showLoading();
+	mem_free.showLoading();
+	mem_used.showLoading();
+	//for tab.
+	charts.push(mem_usage);
+	charts.push(mem_free);
+	charts.push(mem_used);
+	charts.push(cpu_usage);
+	charts.push(user_time);
+	charts.push(sys_time);
+	charts.push(idle_time);
+	charts.push(disk_usage);
+	charts.push(send_package);
+	charts.push(recv_package);
+//jiazaishuju
+//dingshichufa
+setInterval(function(){
+$.getJSON('/mem',function (data) {
+	mem_usage.hideLoading();
+	mem_free.hideLoading();
+	mem_used.hideLoading();
+	mem_usage.setOption({
+		xAxis:{data:data['time']},
+		series:{data:data['usage']}
+		});	
+	mem_used.setOption({
+		xAxis:{data:data['time']},
+		series:{data:data['used']}
+		});	
+	mem_free.setOption({
+		xAxis:{data:data['time']},
+		series:{data:data['free']}
+		});	
+	})
+},1000);
+//cpu
+setInterval(function(){
+$.getJSON('/cpu',function (data) {
+	cpu_usage.setOption({
+		xAxis:{data:data['time']},
+		series:{data:data['usage']}
+		});	
+	user_time.setOption({
+		xAxis:{data:data['time']},
+		series:{data:data['user_time']}
+		});	
+	sys_time.setOption({
+		xAxis:{data:data['time']},
+		series:{data:data['sys_time']}
+		});	
+	idle_time.setOption({
+		xAxis:{data:data['time']},
+		series:{data:data['idle_time']}
+		});	
+	})
+},1000);
+//disk
+setInterval(function(){
+$.getJSON('/disk',function (data) {
+	disk_usage.setOption({
+		xAxis:{data:data['time']},
+		series:{data:data['usage']}
+		});	
+	})
+},1000);
+//net
+setInterval(function(){
+$.getJSON('/net',function (data) {
+	send_package.setOption({
+		xAxis:{data:data['time']},
+		series:{data:data['send_package']}
+		});	
+	recv_package.setOption({
+		xAxis:{data:data['time']},
+		series:{data:data['recv_package']}
+		});	
+	})
+},1000);
+	$(window).resize(function() {
+			for(var i = 0; i < charts.length; i++) {
+				charts[i].resize();
+			}
+		});
+	$('a[data-toggle="pill"]').on('shown.bs.tab', function(e) {
+		for(var i = 0; i < charts.length; i++) {
+			charts[i].resize();
+		}
+	});
+
+</script>
+</body>
+</html>
+
